@@ -19,6 +19,8 @@ the security scan's warning about an unknown developer.
 
 ## What the system check does
 
+A step-by-step guide with screenshots: [docs/system-check.md](docs/system-check.md).
+
 - **Phone info** (every run, no permissions): device and OS, MIUI version,
   CPU clusters, GPU, memory and storage, display, battery (including design
   capacity and cycle count where readable), thermal zones, every sensor,
@@ -43,7 +45,10 @@ names, cell IDs or coordinates.
 ## Build
 
 GitHub Actions builds every push to `main` and publishes a release
-(`v0.1.<run>`). Locally: `./gradlew assembleRelease` with JDK 17.
+(`v0.1.<run>`). A second job then runs the APK on an Android 10 emulator,
+walks through every screen with `scripts/screenshots.sh`, fails on a crash,
+and uploads screenshots, the saved report and logcat as an artifact.
+Locally: `./gradlew assembleRelease` with JDK 17.
 
 The toolchain is pinned to a known-good set (AGP 8.13, Kotlin 2.2, Gradle
 8.14, Compose BOM 2025.10). Builds are signed with a committed prototype key;
