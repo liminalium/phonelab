@@ -5,7 +5,7 @@ name: design
 on:
   push:
     branches: [main]
-    paths: ['design/**']
+    paths: ['design/mockups/**']
   workflow_dispatch:
 
 jobs:
