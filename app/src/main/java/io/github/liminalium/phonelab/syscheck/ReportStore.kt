@@ -1,6 +1,7 @@
 package io.github.liminalium.phonelab.syscheck
 
 import android.content.ClipData
+import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -47,6 +48,24 @@ object ReportStore {
             ?: error("the Downloads folder refused the file")
         write(uri)
         return uri to path
+    }
+
+    /** The Download/PhoneLab copy of [file] made by an earlier run, if it still exists. */
+    fun findExport(ctx: Context, file: File): Pair<Uri, String>? = safe {
+        ctx.contentResolver.query(
+            MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+            arrayOf(MediaStore.MediaColumns._ID),
+            "${MediaStore.MediaColumns.DISPLAY_NAME} = ?",
+            arrayOf(file.name),
+            null,
+        )?.use { c ->
+            if (c.moveToFirst()) {
+                ContentUris.withAppendedId(MediaStore.Downloads.EXTERNAL_CONTENT_URI, c.getLong(0)) to
+                    "${Environment.DIRECTORY_DOWNLOADS}/PhoneLab/${file.name}"
+            } else {
+                null
+            }
+        }
     }
 
     /** Shares the JSON file, with the text summary for apps that only take text. */

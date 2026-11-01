@@ -34,15 +34,19 @@ shot() { sleep 1; adb exec-out screencap -p >"$OUT/$1.png"; echo "saved $1.png";
 swipe_up() { adb shell input swipe 540 1700 540 700 400; sleep 1; }
 to_top() { for _ in $(seq 12); do adb shell input swipe 540 500 540 2000 80; done; sleep 1; }
 # Scrolls until the view is on screen, then drags it up near the top.
+# Drags never start below y=1800, where the navigation bar would swallow them.
 bring_to_top() {
-  local xy=""
-  for _ in $(seq 25); do
-    xy=$(find_view "$@") && break
+  local xy y
+  for _ in $(seq 30); do
+    if xy=$(find_view "$@"); then
+      y=${xy#* }
+      if ((y <= 450)); then return 0; fi
+      if ((y <= 1800)); then adb shell input swipe 540 "$y" 540 300 1500; sleep 1; return 0; fi
+    fi
     swipe_up
   done
-  [ -n "$xy" ] || { echo "never found: $*"; return 1; }
-  local y=${xy#* }
-  if ((y > 450)); then adb shell input swipe 540 "$y" 540 300 1500; sleep 1; fi
+  echo "never found: $*"
+  return 1
 }
 
 # Location on, and a fix in Berlin, so the GNSS and Wi-Fi tests have something to report.
@@ -91,17 +95,6 @@ bring_to_top text "What this phone can do"
 shot 08-capabilities
 swipe_up
 shot 09-capabilities-more
-
-# 6. Dark theme follows the system setting. Restart the app so the new
-#    configuration is read; it reopens on the saved report.
-adb shell settings put secure ui_night_mode 2
-adb shell cmd uimode night yes
-adb shell am force-stop "$PKG"
-sleep 2
-adb shell am start -W -n "$PKG/.MainActivity"
-wait_for 30 contains "Checked " || true
-shot 10-dark-theme
-adb shell cmd uimode night no
 
 # The report the app saved to Download/PhoneLab.
 adb pull /sdcard/Download/PhoneLab "$OUT/report" || FAILED=1

@@ -150,6 +150,10 @@ class SystemCheckViewModel(app: Application) : AndroidViewModel(app) {
         runId = root.getString("runId")
         createdAt = Instant.parse(root.getString("createdAt"))
         savedFile = file
+        ReportStore.findExport(ctx, file)?.let { (uri, path) ->
+            exportUri = uri
+            exportedPath = path
+        }
         true
     } catch (t: Throwable) {
         states.clear()
