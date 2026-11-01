@@ -92,10 +92,14 @@ shot 08-capabilities
 swipe_up
 shot 09-capabilities-more
 
-# 6. Dark theme follows the system setting.
+# 6. Dark theme follows the system setting. Restart the app so the new
+#    configuration is read; it reopens on the saved report.
+adb shell settings put secure ui_night_mode 2
 adb shell cmd uimode night yes
-sleep 3
-to_top
+adb shell am force-stop "$PKG"
+sleep 2
+adb shell am start -W -n "$PKG/.MainActivity"
+wait_for 30 contains "Checked " || true
 shot 10-dark-theme
 adb shell cmd uimode night no
 

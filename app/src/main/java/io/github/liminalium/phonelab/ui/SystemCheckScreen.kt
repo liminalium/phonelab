@@ -18,10 +18,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -81,7 +84,17 @@ fun SystemCheckScreen(vm: SystemCheckViewModel = viewModel()) {
     val info = vm.checks.filter { it.kind == Kind.INFO }
     val tests = vm.checks.filter { it.kind == Kind.TEST }
 
-    Scaffold { padding ->
+    // A solid strip behind the status bar, so scrolled cards don't run under the clock.
+    Scaffold(
+        topBar = {
+            Spacer(
+                Modifier
+                    .fillMaxWidth()
+                    .windowInsetsTopHeight(WindowInsets.statusBars)
+                    .background(MaterialTheme.colorScheme.background),
+            )
+        },
+    ) { padding ->
         LazyColumn(
             contentPadding = PaddingValues(
                 start = 16.dp,
