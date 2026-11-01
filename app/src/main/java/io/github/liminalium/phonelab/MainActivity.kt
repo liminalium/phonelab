@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import io.github.liminalium.phonelab.ui.PhoneLabTheme
-import io.github.liminalium.phonelab.ui.SystemCheckScreen
+import io.github.liminalium.phonelab.ui.PhoneLabApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PhoneLabTheme {
-                SystemCheckScreen()
+                PhoneLabApp()
             }
         }
     }

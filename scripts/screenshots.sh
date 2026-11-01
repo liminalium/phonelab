@@ -103,15 +103,42 @@ shot 08-capabilities
 swipe_up
 shot 09-capabilities-more
 
-# 6. Dark theme follows the system setting (the switch only works on Android 11+
+# 7. Recorder: start, leave the app, stop from the notification, keep the MP4.
+adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS 2>/dev/null || true
+adb shell appops set "$PKG" SYSTEM_ALERT_WINDOW allow
+to_top
+tap text "Recorder" || FAILED=1
+shot 11-recorder
+tap text "Start recording" || FAILED=1
+sleep 3
+shot 12-capture-consent
+# Android 10 says "Start now", Android 14+ "Start"; both are the dialog's positive button.
+tap id android:id/button1 2>/dev/null || tap text "Start now" 2>/dev/null || tap text "Start" || FAILED=1
+sleep 5
+shot 13-recording
+adb shell input keyevent KEYCODE_HOME
+sleep 5
+shot 14-recording-over-home-screen
+adb shell cmd statusbar expand-notifications
+sleep 2
+shot 15-recording-notification
+tap text "Stop" 2>/dev/null || tap text "STOP" || FAILED=1
+sleep 4
+adb shell cmd statusbar collapse
+adb shell am start -W -n "$PKG/.MainActivity"
+sleep 3
+shot 16-recording-saved
+adb pull /sdcard/Movies/PhoneLab "$OUT/recordings" || FAILED=1
+
+# 8. Dark theme follows the system setting (the switch only works on Android 11+
 #    emulators). Restart the app so it reads the new configuration.
 if ((SDK >= 30)); then
   adb shell cmd uimode night yes
   adb shell am force-stop "$PKG"
   sleep 2
   adb shell am start -W -n "$PKG/.MainActivity"
-  wait_for 30 contains "Checked " || true
-  shot 10-dark-theme
+  sleep 4
+  shot 17-dark-theme
   adb shell cmd uimode night no
 fi
 

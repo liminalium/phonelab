@@ -97,6 +97,16 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
           script: bash scripts/screenshots.sh out/phonelab.apk screenshots
 
+      - name: Check the recorded video
+        if: always()
+        run: |
+          ls screenshots/recordings/*.mp4 >/dev/null 2>&1 || { echo "::warning::no recording was pulled"; exit 0; }
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
+          for f in screenshots/recordings/*.mp4; do
+            ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of compact "$f"
+            ffmpeg -v error -y -ss 7 -i "$f" -frames:v 1 "screenshots/frame-from-recording.png"
+          done
+
       - uses: actions/upload-artifact@v7
         if: always()
         with:
