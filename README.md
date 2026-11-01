@@ -1,10 +1,15 @@
 # PhoneLab
 
 An Android app that turns a phone into a recording, measurement and automation
-lab. This first build is the **system check**: on first launch it reads
-everything the phone exposes, tests the hardware on request, and saves a report.
-The report decides which modules from the build plan are worth building for
-this phone.
+lab. It has two tabs so far:
+
+- **Recorder:** records the screen, the microphone and live front and back
+  camera bubbles into one MP4 while you use other apps.
+  Guide: [docs/recorder.md](docs/recorder.md).
+- **System check:** on first launch it reads everything the phone exposes,
+  tests the hardware on request, and saves a report that decides which
+  modules from the build plan are worth building for this phone.
+  Guide: [docs/system-check.md](docs/system-check.md).
 
 ## Install on your phone
 
