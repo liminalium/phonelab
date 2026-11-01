@@ -45,7 +45,7 @@ names, cell IDs or coordinates.
 ## Build
 
 GitHub Actions builds every push to `main` and publishes a release
-(`v0.1.<run>`). A second job then runs the APK on an Android 10 emulator,
+(`v0.1.<run>`). A second job then runs the APK on Android 15 and Android 10 emulators,
 walks through every screen with `scripts/screenshots.sh`, fails on a crash,
 and uploads screenshots, the saved report and logcat as an artifact.
 Locally: `./gradlew assembleRelease` with JDK 17.

@@ -49,9 +49,16 @@ bring_to_top() {
   return 1
 }
 
+SDK=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
+echo "emulator API level $SDK"
+
 # Location on, and a fix in Berlin, so the GNSS and Wi-Fi tests have something to report.
-adb shell settings put secure location_providers_allowed +gps
-adb shell settings put secure location_providers_allowed +network
+if ((SDK >= 30)); then
+  adb shell cmd location set-location-enabled true
+else
+  adb shell settings put secure location_providers_allowed +gps
+  adb shell settings put secure location_providers_allowed +network
+fi
 adb emu geo fix 13.405 52.52 >/dev/null 2>&1 || true
 
 adb install -r "$APK" || exit 1
@@ -95,6 +102,18 @@ bring_to_top text "What this phone can do"
 shot 08-capabilities
 swipe_up
 shot 09-capabilities-more
+
+# 6. Dark theme follows the system setting (the switch only works on Android 11+
+#    emulators). Restart the app so it reads the new configuration.
+if ((SDK >= 30)); then
+  adb shell cmd uimode night yes
+  adb shell am force-stop "$PKG"
+  sleep 2
+  adb shell am start -W -n "$PKG/.MainActivity"
+  wait_for 30 contains "Checked " || true
+  shot 10-dark-theme
+  adb shell cmd uimode night no
+fi
 
 # The report the app saved to Download/PhoneLab.
 adb pull /sdcard/Download/PhoneLab "$OUT/report" || FAILED=1

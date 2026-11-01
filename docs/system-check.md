@@ -4,7 +4,7 @@ The system check is the first screen of PhoneLab. It finds out what your
 phone can really do, saves that as a report, and marks each module from the
 build plan as possible or not on this phone.
 
-The screenshots below come from an Android 10 emulator in CI (see
+The screenshots below come from an emulator in CI (see
 [How the screenshots are made](#how-the-screenshots-are-made)), so the
 values are the emulator's, not a real phone's.
 
@@ -95,7 +95,8 @@ names, cell IDs or coordinates.
 
 ## How the screenshots are made
 
-After every build, CI starts an Android 10 (API 29) emulator, installs the
+After every build, CI starts two emulators, Android 15 (like the target moto g55)
+and Android 10 (the oldest supported version), installs the
 APK and walks through the app with `scripts/screenshots.sh`: it waits for
 the first check, opens a card, scrolls, taps **Run hardware tests**, allows
 the permission dialogs and waits for the results. It uploads the
@@ -104,5 +105,5 @@ artifact, and the job fails if the app crashes.
 
 The emulator differs from a real phone: no Bluetooth, no hardware video
 encoder, unreadable CPU speeds and temperatures, and a single simulated
-satellite. Its dark-mode switch also doesn't take effect, so there is no
-dark-theme screenshot; the app follows the phone's dark-mode setting.
+satellite. The app follows the phone's dark-mode setting; the Android 15 run
+also takes a dark-theme screenshot.

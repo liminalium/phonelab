@@ -52,11 +52,23 @@ jobs:
             --title "PhoneLab $VERSION" \
             --notes "Built from ${GITHUB_SHA::7}: $(git log -1 --pretty=%s)"
 
-  # Runs the APK on an Android 10 emulator (the user's phone runs Android 10):
-  # a crash check plus screenshots of every screen, saved as an artifact.
-  screenshots:
+  # Runs the APK on emulators: Android 15 like the target moto g55, and
+  # Android 10, the oldest version the app supports. Each run is a crash check
+  # plus screenshots of every screen, saved as an artifact.
+  emulator:
     needs: apk
     runs-on: ubuntu-latest
+    name: emulator (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: android15
+            api: 35
+            profile: pixel_6
+          - name: android10
+            api: 29
+            profile: pixel_3a
     env:
       VERSION: 0.1.${{ github.run_number }}
     steps:
@@ -73,18 +85,20 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Run the app on Android 10 and take screenshots
+      - name: Run the app and take screenshots
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
+          api-level: ${{ matrix.api }}
           target: google_apis
           arch: x86_64
-          profile: pixel_3a
+          profile: ${{ matrix.profile }}
+          cores: 4
+          ram-size: 4096M
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
           script: bash scripts/screenshots.sh out/phonelab.apk screenshots
 
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: screenshots-${{ env.VERSION }}
+          name: screenshots-${{ matrix.name }}-${{ env.VERSION }}
           path: screenshots
