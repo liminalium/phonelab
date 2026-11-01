@@ -41,6 +41,7 @@ fun computeCapabilities(states: Map<String, CheckState>): List<Capability> {
     val battery = data("battery")
     val thermal = data("thermal")
     val readiness = data("readiness")
+    val sdk = data("device")?.optInt("sdk") ?: android.os.Build.VERSION.SDK_INT
 
     val out = mutableListOf<Capability>()
     fun add(area: String, module: String, verdict: Verdict, note: String? = null) {
@@ -164,6 +165,7 @@ fun computeCapabilities(states: Map<String, CheckState>): List<Capability> {
     when {
         thermal == null -> add("Device info", "Thermal monitor", Verdict.UNKNOWN)
         thermal.optInt("zonesReadable") > 0 -> add("Device info", "Thermal monitor", Verdict.YES, "${thermal.optInt("zonesReadable")} temperature sensors")
+        thermal.opt("headroom10s") is Number -> add("Device info", "Thermal monitor", Verdict.PARTIAL, "throttling status and headroom; no temperatures")
         else -> add("Device info", "Thermal monitor", Verdict.PARTIAL, "throttling status only")
     }
     listOf("Display tester", "Touch tester", "Sensor inspector", "Camera inspector", "Codec inspector", "System info")
@@ -179,7 +181,11 @@ fun computeCapabilities(states: Map<String, CheckState>): List<Capability> {
 
     // Health
     flag("Health", "Heart rate", if (camerasKnown) cameras.any { it.optString("facing") == "back" && it.optBoolean("flash") } else null)
-    flag("Health", "Health Connect", installed("healthConnect"), no = "Health Connect app not installed")
+    if (sdk >= 34) {
+        add("Health", "Health Connect", Verdict.YES, "built into Android 14+")
+    } else {
+        flag("Health", "Health Connect", installed("healthConnect"), no = "Health Connect app not installed")
+    }
 
     // Data
     listOf("Multi-sensor logger", "Live streaming", "Remote control", "Experiment builder")

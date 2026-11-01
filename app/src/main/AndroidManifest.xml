@@ -18,6 +18,10 @@
         tools:targetApi="s" />
     <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS" />
     <uses-permission android:name="android.permission.TRANSMIT_IR" />
+    <!-- Android refuses to say whether biometrics are set up without this -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <!-- Android 13+: needed for the recorder's ongoing notification -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Lets the readiness card ask for "no battery limits" directly -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 

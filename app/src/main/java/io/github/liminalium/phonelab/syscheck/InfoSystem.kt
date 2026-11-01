@@ -378,17 +378,23 @@ fun thermalInfo(ctx: Context): Outcome {
         }.orEmpty()
     // Ignore implausible sentinel values some kernels report for idle sensors.
     val hottest = zones.filter { it.second in -40.0..150.0 }.maxByOrNull { it.second }
+    // 0 = cool, 1 = throttling now; NaN when the phone doesn't report it.
+    val headroom = if (Build.VERSION.SDK_INT >= 30) safe { pm.getThermalHeadroom(10) }?.takeIf { it.isFinite() } else null
     val data = json {
         put("status", statusName)
-        if (Build.VERSION.SDK_INT >= 30) attempt("headroom10s") { pm.getThermalHeadroom(10) }
+        put("headroom10s", headroom)
         put("zonesReadable", zones.size)
         put("zones", JSONArray().also { a -> zones.forEach { (t, c) -> a.put(json { put("type", t); put("celsius", c) }) } })
     }
-    val headline = "throttling: $statusName · " + if (zones.isEmpty()) "temperature sensors not readable" else
-        "${zones.size} sensors readable · hottest ${fmt("%.0f °C", hottest?.second ?: 0.0)} (${hottest?.first})"
+    val headline = listOfNotNull(
+        "throttling: $statusName",
+        headroom?.let { fmt("headroom %.2f", it) },
+        if (zones.isEmpty()) "temperature sensors not readable" else
+            "${zones.size} sensors readable · hottest ${fmt("%.0f °C", hottest?.second ?: 0.0)} (${hottest?.first})",
+    ).joinToString(" · ")
     val status = when {
         pm.currentThermalStatus >= PowerManager.THERMAL_STATUS_MODERATE -> Status.WARN
-        zones.isEmpty() -> Status.WARN
+        zones.isEmpty() && headroom == null -> Status.WARN
         else -> Status.OK
     }
     return Outcome(status, headline, data)
