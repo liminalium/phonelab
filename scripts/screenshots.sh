@@ -12,7 +12,23 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 FAILED=0
 mkdir -p "$OUT"
 
-dump() { adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 && adb exec-out cat /sdcard/ui.xml; }
+# Slow emulators sometimes show "<app> isn't responding" over everything,
+# which hides the app from uiautomator; answer Wait and look again.
+dump() {
+  local xml xy
+  for _ in 1 2 3; do
+    xml=$(adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 && adb exec-out cat /sdcard/ui.xml) || return 1
+    if xy=$(echo "$xml" | python3 "$HERE/ui.py" id aerr_wait); then
+      echo "dismissing a system 'isn't responding' dialog" >&2
+      adb shell input tap $xy
+      sleep 2
+      continue
+    fi
+    echo "$xml"
+    return 0
+  done
+  return 1
+}
 find_view() { dump | python3 "$HERE/ui.py" "$@"; }
 tap() {
   local xy
@@ -61,6 +77,10 @@ else
 fi
 adb emu geo fix 13.405 52.52 >/dev/null 2>&1 || true
 
+# Let the launcher settle after boot, and clear any dialog it left behind.
+sleep 15
+dump >/dev/null || true
+
 adb install -r "$APK" || exit 1
 adb logcat -c
 adb shell am start -W -n "$PKG/.MainActivity"
@@ -103,12 +123,16 @@ shot 08-capabilities
 swipe_up
 shot 09-capabilities-more
 
-# 7. Recorder: start, leave the app, stop from the notification, keep the MP4.
+# 7. Recorder: start, leave the app, show the notification, stop from the app, keep the MP4.
 adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS 2>/dev/null || true
 adb shell appops set "$PKG" SYSTEM_ALERT_WINDOW allow
 to_top
 tap text "Recorder" || FAILED=1
 shot 11-recorder
+# The screen never goes idle while the camera previews run, so uiautomator
+# can't find views during the recording. The Stop button takes the Start
+# button's place, so remember where that is.
+START_XY=$(find_view text "Start recording") || FAILED=1
 tap text "Start recording" || FAILED=1
 sleep 3
 shot 12-capture-consent
@@ -122,11 +146,12 @@ shot 14-recording-over-home-screen
 adb shell cmd statusbar expand-notifications
 sleep 2
 shot 15-recording-notification
-tap text "Stop" 2>/dev/null || tap text "STOP" || FAILED=1
-sleep 4
 adb shell cmd statusbar collapse
+sleep 1
 adb shell am start -W -n "$PKG/.MainActivity"
-sleep 3
+sleep 2
+if [ -n "${START_XY:-}" ]; then adb shell input tap $START_XY; else FAILED=1; fi
+sleep 4
 shot 16-recording-saved
 adb pull /sdcard/Movies/PhoneLab "$OUT/recordings" || FAILED=1
 

@@ -93,8 +93,10 @@ data class VideoSize(val width: Int, val height: Int, val dpi: Int, val bitrate:
 object VideoSizes {
     /**
      * The largest size the H.264 encoder accepts, at the screen's shape. Phone
-     * screens such as 1080x2400 are often taller than the encoder allows, so it
-     * steps down until the encoder agrees.
+     * screens such as 1080x2400 are often bigger than the encoder allows, so it
+     * steps down until the encoder agrees. Encoders list their limits for
+     * landscape (say 1920x1088) and record portrait the same way, so a size
+     * counts as supported in either orientation.
      */
     fun pick(ctx: Context): VideoSize {
         val display = ctx.getSystemService(DisplayManager::class.java).getDisplay(Display.DEFAULT_DISPLAY)
@@ -108,7 +110,7 @@ object VideoSizes {
         for (scale in listOf(1.0, 0.8, 0.75, 2.0 / 3, 0.5)) {
             val w = (m.widthPixels * scale).toInt() / 16 * 16
             val h = (m.heightPixels * scale).toInt() / 16 * 16
-            if (caps == null || caps.isSizeSupported(w, h)) {
+            if (caps == null || caps.isSizeSupported(w, h) || caps.isSizeSupported(h, w)) {
                 val bitrate = (w.toLong() * h * 30 / 10).toInt().coerceIn(2_000_000, 12_000_000)
                 return VideoSize(w, h, m.densityDpi, bitrate)
             }
