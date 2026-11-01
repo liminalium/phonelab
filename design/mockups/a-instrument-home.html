@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=412">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=block" rel="stylesheet">
+<style>
+:root{--bg:#0B0F12;--s:#12181D;--l:#1E2830;--t:#E6EDF0;--m:#7C8B94;--cap:#FF5D5D;--mot:#4FD1C5;--env:#F6C453;--rad:#7AA2FF;--dev:#B38CFF;--dat:#8BE38B}
+*{box-sizing:border-box;margin:0}body{width:412px;height:915px;background:var(--bg);color:var(--t);font:14px Inter,sans-serif;overflow:hidden;position:relative}
+.sb{display:flex;justify-content:space-between;padding:10px 20px 0;font:600 13px Inter;color:var(--m)}
+.mono{font-family:'JetBrains Mono',monospace}
+header{padding:14px 18px 10px;display:flex;justify-content:space-between;align-items:flex-end}
+h1{font:700 22px Inter;letter-spacing:-.3px}.dev{font:12px 'JetBrains Mono';color:var(--m);margin-top:3px}
+.rec{display:flex;align-items:center;gap:8px;background:var(--s);border:1px solid var(--l);border-radius:22px;padding:9px 14px;font-weight:600}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--cap);box-shadow:0 0 10px var(--cap)}
+.strip{display:flex;gap:6px;padding:0 18px 12px;overflow:hidden}
+.chip{font:11px 'JetBrains Mono';color:var(--m);border:1px solid var(--l);border-radius:8px;padding:4px 8px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px}
+.tile{background:var(--s);border:1px solid var(--l);border-radius:14px;padding:11px 12px 10px;height:118px;position:relative;overflow:hidden}
+.tile.wide{grid-column:span 2;height:104px}
+.k{display:flex;justify-content:space-between;font:600 11px Inter;letter-spacing:.6px;text-transform:uppercase;color:var(--m)}
+.k b{font-weight:600}.v{font:600 24px 'JetBrains Mono';margin-top:6px;letter-spacing:-.5px}.v small{font-size:12px;color:var(--m);font-weight:400;margin-left:3px}
+.sp{position:absolute;left:12px;right:12px;bottom:8px;height:34px}
+.bars{position:absolute;left:12px;right:12px;bottom:10px;height:34px;display:flex;align-items:flex-end;gap:2px}.bars i{flex:1;border-radius:1px;opacity:.9}
+nav{position:absolute;bottom:0;left:0;right:0;height:78px;background:#0E1418;border-top:1px solid var(--l);display:flex;justify-content:space-around;align-items:center;padding-bottom:10px}
+nav div{font:600 11px Inter;color:var(--m);text-align:center}nav div i{display:block;font-style:normal;font-size:18px;margin-bottom:3px}nav .on{color:var(--t)}
+.sats{position:absolute;right:12px;bottom:10px;display:flex;gap:3px;align-items:flex-end;height:30px}.sats i{width:4px;background:var(--rad);border-radius:1px}
+</style></head><body>
+<div class="sb"><span>19:58</span><span>5G ▲ 43%</span></div>
+<header><div><h1>Lab</h1><div class="dev">moto g55 · 38 sensors · all live</div></div><div class="rec"><span class="dot"></span>Record</div></header>
+<div class="strip"><span class="chip">BAT −1.16 A</span><span class="chip">21.0 °C</span><span class="chip">CPU 2.0/2.5 GHz</span><span class="chip">THERMAL ok</span></div>
+<div class="grid">
+ <div class="tile"><div class="k"><span style="color:var(--mot)">Accel</span><b>395 Hz</b></div><div class="v">9.81<small>m/s²</small></div><div class="sp" id="acc"></div></div>
+ <div class="tile"><div class="k"><span style="color:var(--mot)">Gyro</span><b>398 Hz</b></div><div class="v">0.04<small>rad/s</small></div><div class="sp" id="gyr"></div></div>
+ <div class="tile"><div class="k"><span style="color:var(--env)">Sound</span><b>48 kHz</b></div><div class="v">52<small>dB(A)</small></div><div class="bars" id="snd"></div></div>
+ <div class="tile"><div class="k"><span style="color:var(--mot)">Heading</span><b>50 Hz</b></div><div class="v">271°<small>W</small></div><div class="sp" id="mag"></div></div>
+ <div class="tile wide"><div class="k"><span style="color:var(--rad)">GNSS</span><b>raw ✓ · L1</b></div><div class="v">48<small>sats · fix ±3 m · 11 s</small></div><div class="sats" id="sat"></div></div>
+ <div class="tile"><div class="k"><span style="color:var(--rad)">Wi-Fi</span><b>2.4/5</b></div><div class="v">13<small>nets</small></div><div class="sp" id="wifi"></div></div>
+ <div class="tile"><div class="k"><span style="color:var(--rad)">BLE</span><b>scan</b></div><div class="v">49<small>near</small></div><div class="sp" id="ble"></div></div>
+ <div class="tile"><div class="k"><span style="color:var(--env)">Light</span><b>on-change</b></div><div class="v">340<small>lx</small></div><div class="sp" id="lux"></div></div>
+ <div class="tile"><div class="k"><span style="color:var(--dev)">NFC</span><b>ready</b></div><div class="v">—<small>tap a tag</small></div></div>
+</div>
+<nav><div class="on"><i>◉</i>Lab</div><div><i>⏺</i>Record</div><div><i>◷</i>Snapshots</div><div><i>✦</i>Agent</div></nav>
+<script src="_common.js"></script><script>
+spark(acc,wave(80,.45,.6,.5,3),'#4FD1C5',-1.5,1.5);spark(gyr,wave(80,.2,.3,.4,7),'#4FD1C5',-1.2,1.2);
+spark(mag,wave(60,.08,.5,.15,9),'#4FD1C5',-1,1);spark(wifi,wave(40,.15,.3,.3,4),'#7AA2FF',-1,1);
+spark(ble,wave(40,.3,.4,.5,5),'#7AA2FF',-1.2,1.2);spark(lux,wave(40,.05,.6,.1,2),'#F6C453',-1,1);bars(snd,28,'#F6C453',11);
+sat.innerHTML=[18,26,12,30,22,28,16,24,20,29,14,27,25,19,23,30,21,17].map(h=>`<i style="height:${h}px;opacity:${(h/30).toFixed(2)}"></i>`).join('');
+</script></body></html>

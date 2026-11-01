@@ -1,0 +1,33 @@
+name: design
+
+# Renders the HTML mockups in design/mockups to phone-sized PNGs with the
+# runner's Chrome. Homebase has no browser, so this is where they get drawn.
+on:
+  push:
+    branches: [main]
+    paths: ['design/**']
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Render mockups
+        run: |
+          mkdir -p renders
+          shot() { google-chrome --headless=new --no-sandbox --hide-scrollbars --virtual-time-budget=8000 "$@"; }
+          for f in design/mockups/*.html; do
+            name=$(basename "$f" .html)
+            [ "$name" = board ] && continue
+            shot --force-device-scale-factor=2 --window-size=412,915 --screenshot="renders/$name.png" "file://$PWD/$f"
+          done
+          # Three directions side by side, two screens each.
+          shot --force-device-scale-factor=1 --window-size=1340,2900 --screenshot=renders/board.png "file://$PWD/design/mockups/board.html"
+          ls -l renders
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: mockups
+          path: renders

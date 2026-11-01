@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=412">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@20..48,400,1&display=block" rel="stylesheet">
+<style>
+:root{--bg:#F5FBF7;--sv:#DCEBE3;--pc:#B6F2D5;--onpc:#00382A;--p:#0B7A5A;--t:#171D1A;--m:#3F4944;--red:#BA1A1A}
+*{box-sizing:border-box;margin:0}body{width:412px;height:915px;background:var(--bg);color:var(--t);font:14px 'Roboto Flex',sans-serif;overflow:hidden;position:relative}
+.ms{font-family:'Material Symbols Rounded';font-size:20px;line-height:1;vertical-align:middle}
+.sb{display:flex;justify-content:space-between;padding:10px 20px 0;font:500 13px 'Roboto Flex';color:var(--m)}
+h1{font:400 28px 'Roboto Flex';padding:18px 20px 4px}.sub{padding:0 20px;color:var(--m)}
+.stage{margin:16px auto 0;width:170px;height:330px;border-radius:26px;background:#1E2622;border:6px solid #2B3530;position:relative;overflow:hidden}
+.stage .app{position:absolute;inset:16px 12px auto 12px;height:9px;border-radius:4px;background:#3A4741;box-shadow:0 18px 0 #3A4741,0 36px 0 #33403A,0 54px 0 #33403A,0 90px 0 #3A4741,0 108px 0 #33403A}
+.stage .bub{position:absolute;right:10px;width:46px;height:62px;border-radius:12px;border:2px solid #fff}.stage .f{top:150px;background:linear-gradient(135deg,#C9B8A0,#8E7B63)}.stage .k{top:220px;background:linear-gradient(135deg,#A9C2CF,#55707F)}
+.stage .hud{position:absolute;left:10px;bottom:12px;background:rgba(0,0,0,.55);color:#B6F2D5;font:600 9px monospace;padding:4px 6px;border-radius:6px}
+.hint{text-align:center;font-size:12px;color:var(--m);margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:16px 20px 0;justify-content:center}
+.chip{height:36px;border-radius:10px;border:1px solid #6F7973;padding:0 12px;display:flex;align-items:center;gap:6px;font:500 13px 'Roboto Flex'}.chip.on{background:var(--pc);border-color:var(--pc);color:var(--onpc)}
+.seg{display:flex;margin:14px 20px 0;border:1px solid #6F7973;border-radius:20px;overflow:hidden}.seg div{flex:1;text-align:center;padding:9px 0;font:500 13px 'Roboto Flex'}.seg .on{background:var(--pc);color:var(--onpc)}
+.go{margin:22px auto 0;width:84px;height:84px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(186,26,26,.35)}.go i{width:30px;height:30px;border-radius:50%;background:#fff}
+.lib{position:absolute;bottom:92px;left:20px;right:20px;display:flex;gap:8px}.lib div{flex:1;height:64px;border-radius:12px;background:#2A2622;position:relative}.lib span{position:absolute;left:6px;bottom:5px;color:#fff;font:500 10px 'Roboto Flex'}
+nav{position:absolute;bottom:0;left:0;right:0;height:80px;background:#E9F3EE;display:flex;justify-content:space-around;align-items:center;padding-bottom:8px}
+nav div{text-align:center;font:500 12px 'Roboto Flex';color:var(--m)}nav .pill{width:64px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 4px}nav .on .pill{background:var(--pc);color:var(--onpc)}
+</style></head><body>
+<div class="sb"><span>19:58</span><span>5G ▲ 43%</span></div>
+<h1>Record</h1><div class="sub">Drag the bubbles to place them. What you see is what gets recorded.</div>
+<div class="stage"><div class="app"></div><div class="bub f"></div><div class="bub k"></div><div class="hud">395 Hz · 9.81 m/s² · 52 dB</div></div>
+<div class="hint">Preview of the layout</div>
+<div class="chips"><span class="chip on"><span class="ms">smartphone</span>Screen</span><span class="chip on"><span class="ms">mic</span>Mic</span><span class="chip on"><span class="ms">camera_front</span>Front</span><span class="chip on"><span class="ms">camera_rear</span>Back</span><span class="chip"><span class="ms">speed</span>Sensor overlay</span><span class="chip"><span class="ms">music_note</span>App sound</span></div>
+<div class="seg"><div>720p</div><div class="on">1080p</div><div>Max</div></div>
+<div class="go"><i></i></div>
+<div class="lib"><div><span>0:27</span></div><div><span>1:12</span></div><div><span>0:48</span></div></div>
+<nav><div><div class="pill"><span class="ms">home</span></div>Home</div><div class="on"><div class="pill"><span class="ms">radio_button_checked</span></div>Record</div><div><div class="pill"><span class="ms">history</span></div>Library</div><div><div class="pill"><span class="ms">auto_awesome</span></div>Agent</div></nav>
+</body></html>

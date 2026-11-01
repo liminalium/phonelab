@@ -3,6 +3,8 @@ name: build
 on:
   push:
     branches: [main]
+    # Docs and design mockups don't change the app, so they don't make a release.
+    paths-ignore: ['design/**', 'docs/**', '**.md']
   pull_request:
   workflow_dispatch:
 
